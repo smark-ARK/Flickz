@@ -56,18 +56,6 @@ while True:
 ] """
 
 
-def find_post(id: int):  # 6 finding a post with matching id
-    for p in posts:
-        if p["id"] == id:
-            return p
-
-
-def find_index_of_post(id: int):
-    for i, p in enumerate(posts):
-        if p["id"] == id:
-            return i
-
-
 # Started here 1
 @app.get("/")
 def root():
@@ -135,27 +123,3 @@ def update_post(id: int, post: Post):
             status.HTTP_404_NOT_FOUND, f"No content with specified id:{id}"
         )
     return updated_post
-
-{
-        "post": {
-            "id": 10,
-            "content": "post-2 for sumeriamahi1906",
-            "created_at": "2021-12-08T18:23:30.741497+05:30",
-            "title": "sm 2",
-            "published": false,
-            "owner_id": 7
-        },
-        "votes": 0
-    },
-
- "title": "ark2 post 1",
-    "content": "post-1 for arkhangreat2",
-    "published": true,
-    "id": 5,
-    "created_at": "2021-12-07T18:23:02.921370+05:30",
-    "owner_id": 6,
-    "owner": {
-        "id": 6,
-        "email": "arkhangreat2@gmail.com",
-        "created_at": "2021-12-06T18:00:08.176702+05:30"
-    }

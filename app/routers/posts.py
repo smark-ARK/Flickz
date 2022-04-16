@@ -123,7 +123,7 @@ def update_post(
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, f"No content with specified id:{id}"
         )
-    if post.first().owner_id != current_user.id:
+    if post.owner_id != current_user.id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not allowed to perform the requested action",
