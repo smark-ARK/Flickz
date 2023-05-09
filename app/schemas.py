@@ -14,7 +14,8 @@ from app.models import User
 class PostBase(BaseModel):  # 4
     title: str
     content: str
-    published: bool = True  # optional Feild
+    published: bool = True
+    image: Optional[str]  # optional Feild
     # rating: Optional[int] = None  # fully optional feild
 
 
