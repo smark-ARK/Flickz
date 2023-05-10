@@ -9,8 +9,6 @@ from fastapi import (
     File,
 )
 
-# from ..main import s3
-import boto3
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import label
 from sqlalchemy.sql.functions import count, func

@@ -4,7 +4,6 @@ from . import models
 from .database import engine
 from .routers import users, posts, auth, votes
 from fastapi.middleware.cors import CORSMiddleware
-import boto3
 from google.cloud import storage
 
 
