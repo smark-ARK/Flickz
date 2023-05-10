@@ -4,18 +4,26 @@ from fastapi import (
     status,
     HTTPException,
     APIRouter,
+    UploadFile,
+    Form,
+    File,
 )
+
+# from ..main import s3
+import boto3
 from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import label
 from sqlalchemy.sql.functions import count, func
 
-from app import oauth2
+from app import oauth2, main
 from .. import models, schemas
 from ..database import get_db
 from fastapi.params import Depends  # post data lere
 
 # from pydantic import BaseModel  # schema Validation
 from typing import Optional, List
+
+from google.cloud import storage
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
@@ -50,10 +58,31 @@ def get_posts(
 
 
 @router.post(
+    "/upload-image",
+    status_code=status.HTTP_201_CREATED,
+    response_model=schemas.UploadImageRes,
+)
+async def upload_image(
+    image: UploadFile = File(...),
+):
+    # storage_client = storage.Client.from_service_account_json(
+    #     "somple-social-ark-725ba2e57b95.json"
+    # )
+    # bucket = storage_client.get_bucket("simple-social-posts")
+
+    blob = main.bucket.blob(image.filename)
+    blob.upload_from_string(await image.read())
+    return {
+        "image_url": f"https://storage.googleapis.com/{main.bucket.name}/{image.filename}"
+    }
+
+
+@router.post(
     "/", status_code=status.HTTP_201_CREATED, response_model=schemas.PostResponse
 )  # 3,10 Adding a 201 status code for created post
 def create_posts(
     post: schemas.PostCreate,
+    # image: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):

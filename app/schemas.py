@@ -19,6 +19,10 @@ class PostBase(BaseModel):  # 4
     # rating: Optional[int] = None  # fully optional feild
 
 
+class UploadImageRes(BaseModel):
+    image_url: str
+
+
 class PostCreate(PostBase):
     pass
 
