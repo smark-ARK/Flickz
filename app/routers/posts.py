@@ -29,7 +29,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 @router.get("/", response_model=List[schemas.Postwith])  # 2
 def get_posts(
     db: Session = Depends(get_db),
-    current_user: int = Depends(oauth2.get_current_user),
+    # current_user: int = Depends(oauth2.get_current_user),
     post_limit: int = 10,
     skip: int = 0,
     search: Optional[str] = "",
@@ -46,7 +46,7 @@ def get_posts(
         db.query(models.post, func.count(models.Votes.post_id).label("votes"))
         .join(models.Votes, models.Votes.user_id == models.post.id, isouter=True)
         .group_by(models.post.id)
-        .filter(models.post.title.contains(search))
+        .filter(models.post.related_text.contains(search))
         .limit(post_limit)
         .offset(skip)
         .all()
@@ -97,11 +97,13 @@ def get_post(
     id: int,
     response: Response,
     db: Session = Depends(get_db),
-    current_user: int = Depends(oauth2.get_current_user),
+    # current_user: int = Depends(oauth2.get_current_user),
 ):  # 7 get post using id (id is initially str and is converted to an int), 8.5 Added Response to parameter
+    # .join(models.Comment, models.Comment.post_id == models.post.id, isouter=True)
+
     post = (
         db.query(models.post, func.count(models.Votes.post_id).label("votes"))
-        .join(models.Votes, models.Votes.user_id == models.post.id, isouter=True)
+        .join(models.Votes, models.Votes.post_id == models.post.id, isouter=True)
         .group_by(models.post.id)
         .filter(models.post.id == id)
         .first()
@@ -110,8 +112,11 @@ def get_post(
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, f"post with id:{id} was not found"
         )
+
+        # print(post)
         """ response.status_code = status.HTTP_404_NOT_FOUND
         return {"message": f"post with id:{id} was not found"} """
+    print(post[0])
     return post
 
 

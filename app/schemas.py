@@ -10,13 +10,24 @@ from sqlalchemy.sql.sqltypes import BIGINT, String
 
 from app.models import User
 
+
 # Extending Base model of pydantic (Validating The data we get from request)
 class PostBase(BaseModel):  # 4
-    title: str
-    content: str
+    related_text: str
     published: bool = True
-    image: Optional[str]  # optional Feild
+    images: list  # optional Feild
     # rating: Optional[int] = None  # fully optional feild
+
+
+class CommentBase(BaseModel):
+    post_id: int
+    # user_id: int
+    comment: str
+
+
+class CommentResponse(CommentBase):
+    id: int
+    user_id: int
 
 
 class UploadImageRes(BaseModel):
@@ -29,7 +40,11 @@ class PostCreate(PostBase):
 
 class UserResponse(BaseModel):
     id: int
+    username: str
     email: EmailStr
+    full_name: str
+    about: str
+    profile_photo: str
     created_at: datetime
 
     class Config:
@@ -41,6 +56,7 @@ class PostResponse(PostBase):
     created_at: datetime
     owner_id: int
     owner: UserResponse
+    comments: list
 
     class Config:
         orm_mode = True
@@ -66,8 +82,12 @@ class Postwith(BaseModel):
 
 
 class CreateUser(BaseModel):
+    username: str
+    full_name: str
     email: EmailStr
     password: str
+    about: Optional[str]
+    profile_photo: Optional[str]
 
 
 class UserLogin(BaseModel):

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from sqlalchemy import engine
 from . import models
 from .database import engine
-from .routers import users, posts, auth, votes
+from .routers import users, posts, auth, votes, followers, comments
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import storage
 
@@ -31,6 +31,8 @@ app.include_router(posts.router)
 app.include_router(users.router)
 app.include_router(auth.router)
 app.include_router(votes.router)
+app.include_router(comments.router)
+app.include_router(followers.router)
 
 
 # Started here 1
