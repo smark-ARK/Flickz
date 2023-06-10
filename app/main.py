@@ -11,7 +11,7 @@ models.Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
-origins = ["*"]
+origins = ["localhost"]
 
 storage_client = storage.Client.from_service_account_json(
     "somple-social-ark-725ba2e57b95.json"
