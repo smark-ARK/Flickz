@@ -27,7 +27,11 @@ def login(
     refresh_token = oauth2.create_refresh_token(data={"user_id": user.id})
 
     response.set_cookie(
-        key="refresh_token", value=refresh_token, httponly=True
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        samesite=None,
+        # secure=False,
     )  # set HttpOnly cookie in response
 
     return {
