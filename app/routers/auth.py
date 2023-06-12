@@ -31,7 +31,7 @@ def login(
         value=refresh_token,
         httponly=True,
         samesite="none",
-        secure=False,
+        secure=True,
         domain=None,
     )  # set HttpOnly cookie in response
 
