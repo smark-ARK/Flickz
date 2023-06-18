@@ -17,7 +17,7 @@ from typing import Optional, List
 router = APIRouter(prefix="/users", tags=["Users"])
 
 
-@router.post("/")
+@router.post("/", response_model=schemas.UserResponse)
 def create_user(user: schemas.CreateUser, db: Session = Depends(get_db)):
     hashed_password = utils.hash(user.password)
     user.password = hashed_password
@@ -25,7 +25,7 @@ def create_user(user: schemas.CreateUser, db: Session = Depends(get_db)):
     db.add(created_user)
     db.commit()
     db.refresh(created_user)
-    return {"message": "registered succesfully"}
+    return created_user
 
 
 @router.get("/{id}", response_model=schemas.UserResponse)

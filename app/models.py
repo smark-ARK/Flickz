@@ -26,10 +26,10 @@ class User(Base):
     __tablename__ = "Users"
     id = Column(Integer, primary_key=True, nullable=False)
     username = Column(String, unique=True)
-    full_name = Column(String, nullable=True)
+    full_name = Column(String, nullable=True, default="full name")
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
-    about = Column(String, nullable=True)
+    about = Column(String, nullable=True, default="about user")
     profile_photo = Column(
         String,
         nullable=True,
