@@ -83,7 +83,7 @@ class Postwith(BaseModel):
 
 class CreateUser(BaseModel):
     username: str
-    full_name: str
+    full_name: Optional[str]
     email: EmailStr
     password: str
     about: Optional[str]
