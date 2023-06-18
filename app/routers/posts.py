@@ -29,7 +29,7 @@ router = APIRouter(prefix="/posts", tags=["Posts"])
 @router.get("/", response_model=List[schemas.Postwith])  # 2
 def get_posts(
     db: Session = Depends(get_db),
-    current_user: int = Depends(oauth2.get_current_user),
+    # current_user: int = Depends(oauth2.get_current_user),
     post_limit: int = 10,
     skip: int = 0,
     search: Optional[str] = "",
@@ -97,7 +97,7 @@ def get_post(
     id: int,
     response: Response,
     db: Session = Depends(get_db),
-    current_user: int = Depends(oauth2.get_current_user),
+    # current_user: int = Depends(oauth2.get_current_user),
 ):  # 7 get post using id (id is initially str and is converted to an int), 8.5 Added Response to parameter
     # .join(models.Comment, models.Comment.post_id == models.post.id, isouter=True)
 
