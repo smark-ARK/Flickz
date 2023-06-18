@@ -26,11 +26,15 @@ class User(Base):
     __tablename__ = "Users"
     id = Column(Integer, primary_key=True, nullable=False)
     username = Column(String, unique=True)
-    full_name = Column(String)
+    full_name = Column(String, nullable=True)
     email = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
-    about = Column(String)
-    profile_photo = Column(String)
+    about = Column(String, nullable=True)
+    profile_photo = Column(
+        String,
+        nullable=True,
+        default="https://storage.googleapis.com/simple-social-posts/person_male.jpg",
+    )
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
