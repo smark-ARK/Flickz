@@ -6,13 +6,23 @@ from .routers import users, posts, auth, votes, followers, comments
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import storage
 
+# from socketio import AsyncServer
+from fastapi_socketio import SocketManager
+
 
 models.Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
-origins = ["http://localhost:5173", "http://localhost:3000", "https://*"]
 
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://*",
+    "http://127.0.0.1:8000",
+]
+
+sio = SocketManager(app=app, cors_allowed_origins=origins)
 storage_client = storage.Client.from_service_account_json(
     "somple-social-ark-725ba2e57b95.json"
 )

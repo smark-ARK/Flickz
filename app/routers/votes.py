@@ -5,6 +5,7 @@ from fastapi import (
     HTTPException,
     APIRouter,
 )
+from app.utils import send_event
 from fastapi.params import Depends
 from .. import database, schemas, models, oauth2
 from sqlalchemy.orm import Session
@@ -13,12 +14,13 @@ router = APIRouter(prefix="/votes", tags=["Votes"])
 
 
 @router.post("/", status_code=status.HTTP_200_OK)
-def vote(
+async def vote(
     vote: schemas.Vote,
     db: Session = Depends(database.get_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
     post = db.query(models.post).filter(models.post.id == vote.post_id).first()
+    print(post.owner_id)
     if not post:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -37,6 +39,20 @@ def vote(
         new_vote = models.Votes(user_id=current_user.id, post_id=vote.post_id)
         db.add(new_vote)
         db.commit()
+        await send_event(
+            f"voted-{post.owner_id}",
+            {
+                "post_id": post.id,
+                "owner_id": post.owner_id,
+                "related_text": post.related_text,
+                "dir": vote.dir,
+                "voter": {
+                    "id": current_user.id,
+                    "username": current_user.username,
+                    "profile_photo": current_user.profile_photo,
+                },
+            },
+        )
         return {"message": "Succesfully added a vote"}
 
     else:
