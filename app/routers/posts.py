@@ -44,7 +44,7 @@ def get_posts(
     # SELECT posts.*, COUNT(votes.post_id) AS votes FROM posts LEFT JOIN votes ON posts.id=votes.post_id GROUP BY posts.id;
     result = (
         db.query(models.post, func.count(models.Votes.post_id).label("votes"))
-        .join(models.Votes, models.Votes.user_id == models.post.id, isouter=True)
+        .join(models.Votes, models.Votes.post_id == models.post.id, isouter=True)
         .group_by(models.post.id)
         .filter(models.post.related_text.contains(search))
         .limit(post_limit)
@@ -184,7 +184,7 @@ def get_posts_by_user_id(
     # SELECT posts.*, COUNT(votes.post_id) AS votes FROM posts LEFT JOIN votes ON posts.id=votes.post_id GROUP BY posts.id;
     result = (
         db.query(models.post, func.count(models.Votes.post_id).label("votes"))
-        .join(models.Votes, models.Votes.user_id == models.post.id, isouter=True)
+        .join(models.Votes, models.Votes.post_id == models.post.id, isouter=True)
         .group_by(models.post.id)
         .filter(models.post.owner_id == user_id)
         .limit(post_limit)
