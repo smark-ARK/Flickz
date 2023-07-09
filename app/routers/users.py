@@ -80,3 +80,14 @@ def get_user(id: int, db: Session = Depends(get_db)):
         "followers_count": followers_count,
         "following_count": following_count,
     }
+
+
+# @router.get("/")
+# async def get_all_users(
+#     db: Session = Depends(get_db),
+#     # current_user: int = Depends(oauth2.get_current_user),
+#     post_limit: int = 10,
+#     skip: int = 0,
+#     username_search: Optional[str] = "",
+#     fullname_search: Optional[str] = "",
+#     ):
