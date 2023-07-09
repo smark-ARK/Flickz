@@ -82,12 +82,24 @@ def get_user(id: int, db: Session = Depends(get_db)):
     }
 
 
-# @router.get("/")
-# async def get_all_users(
-#     db: Session = Depends(get_db),
-#     # current_user: int = Depends(oauth2.get_current_user),
-#     post_limit: int = 10,
-#     skip: int = 0,
-#     username_search: Optional[str] = "",
-#     fullname_search: Optional[str] = "",
-#     ):
+@router.get("/", response_model=List[schemas.UserResponse])
+async def get_all_users(
+    db: Session = Depends(get_db),
+    # current_user: int = Depends(oauth2.get_current_user),
+    limit: int = 10,
+    skip: int = 0,
+    username_search: Optional[str] = "",
+    fullname_search: Optional[str] = "",
+):
+    res = (
+        db.query(models.User)
+        .filter(
+            models.User.username.contains(username_search),
+            models.User.full_name.contains(fullname_search),
+        )
+        .limit(limit=limit)
+        .offset(skip)
+        .all()
+    )
+
+    return res
