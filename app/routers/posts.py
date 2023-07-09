@@ -116,7 +116,7 @@ def get_post(
         # print(post)
         """ response.status_code = status.HTTP_404_NOT_FOUND
         return {"message": f"post with id:{id} was not found"} """
-    print(post[0])
+    print(post)
     return post
 
 
@@ -164,3 +164,32 @@ def update_post(
     db.commit()
 
     return query.first()
+
+
+@router.get("/user/{user_id}", response_model=List[schemas.Postwith])
+def get_posts_by_user_id(
+    user_id: int,
+    db: Session = Depends(get_db),
+    # current_user: int = Depends(oauth2.get_current_user),
+    post_limit: int = 10,
+    skip: int = 0,
+):
+    """posts = (
+        db.query(models.post)
+        .filter(models.post.title.contains(search))
+        .limit(post_limit)
+        .offset(skip)
+        .all()
+    )"""
+    # SELECT posts.*, COUNT(votes.post_id) AS votes FROM posts LEFT JOIN votes ON posts.id=votes.post_id GROUP BY posts.id;
+    result = (
+        db.query(models.post, func.count(models.Votes.post_id).label("votes"))
+        .join(models.Votes, models.Votes.user_id == models.post.id, isouter=True)
+        .group_by(models.post.id)
+        .filter(models.post.owner_id == user_id)
+        .limit(post_limit)
+        .offset(skip)
+        .all()
+    )
+    print(result)
+    return result

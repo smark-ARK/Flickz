@@ -9,6 +9,7 @@ from fastapi.params import Depends
 from .. import database, schemas, models, oauth2
 from sqlalchemy.orm import Session
 from app.utils import send_event
+from typing import List
 
 
 router = APIRouter(prefix="/comments", tags=["Comments"])
@@ -54,3 +55,10 @@ async def comment(
         },
     )
     return new_comment
+
+
+@router.get("/post_id", response_model=List[schemas.CommentResponse])
+async def get_comments(post_id: int, db: Session = Depends(database.get_db)):
+    comments = db.query(models.Comment).filter(models.Comment.post_id == post_id).all()
+    print(comments[0].user)
+    return comments

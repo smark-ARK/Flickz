@@ -33,7 +33,7 @@ class User(Base):
     profile_photo = Column(
         String,
         nullable=True,
-        default="https://storage.googleapis.com/simple-social-posts/person_male.jpg",
+        default="https://storage.googleapis.com/simple-social-posts/blank-profile-picture-973460_1280.webp",
     )
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
@@ -44,6 +44,7 @@ class User(Base):
     following = relationship(
         "Followers", foreign_keys="[Followers.following_id]", back_populates="following"
     )
+    # comments = relationship("Comment", back_populates="user")
 
 
 class Votes(Base):
@@ -89,12 +90,6 @@ class Followers(Base):
 class Comment(Base):
     __tablename__ = "comments"
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    user_id = Column(
-        Integer,
-        ForeignKey("Users.id", ondelete="CASCADE"),
-        primary_key=True,
-        nullable=False,
-    )
     post_id = Column(
         Integer,
         ForeignKey("posts.id", ondelete="CASCADE"),
@@ -103,3 +98,10 @@ class Comment(Base):
     )
     comment = Column(String, nullable=False)
     post = relationship("post", back_populates="comments")
+    user_id = Column(
+        Integer,
+        ForeignKey("Users.id", ondelete="CASCADE"),
+        primary_key=True,
+        nullable=False,
+    )
+    user = relationship("User")

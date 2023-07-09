@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from pydantic.networks import EmailStr
@@ -25,11 +25,6 @@ class CommentBase(BaseModel):
     comment: str
 
 
-class CommentResponse(CommentBase):
-    id: int
-    user_id: int
-
-
 class UploadImageRes(BaseModel):
     image_url: str
 
@@ -51,12 +46,37 @@ class UserResponse(BaseModel):
         orm_mode = True
 
 
+class UserRelationResponse(BaseModel):
+    id: int
+    username: str
+    full_name: str
+    profile_photo: str
+
+    class Config:
+        orm_mode = True
+
+
+class CommentResponse(CommentBase):
+    id: int
+    user_id: int
+    user: UserRelationResponse
+
+    class Config:
+        orm_mode = True
+
+
+class Profile(BaseModel):
+    user: UserResponse
+    followers_count: int
+    following_count: int
+
+
 class PostResponse(PostBase):
     id: int
     created_at: datetime
     owner_id: int
-    owner: UserResponse
-    comments: list
+    owner: UserRelationResponse
+    comments: List[CommentResponse]
 
     class Config:
         orm_mode = True
@@ -76,6 +96,9 @@ class Postwith(BaseModel):
     post: PostResponse
     votes: int
     pass
+
+    class Config:
+        orm_mode = True
 
     class Config:
         orm_mode = True

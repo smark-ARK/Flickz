@@ -28,13 +28,13 @@ def create_user(user: schemas.CreateUser, db: Session = Depends(get_db)):
     return created_user
 
 
-@router.get("/{id}", response_model=schemas.UserResponse)
+@router.get("/{id}", response_model=schemas.Profile)
 def get_user(id: int, db: Session = Depends(get_db)):
     user = (
         db.query(
             models.User,
-            func.count(models.User.followers).label("followers_count"),
-            func.count(models.User.following).label("following_count"),
+            # func.count(models.User.followers).label("followers_count"),
+            # func.count(models.User.following).label("following_counjkt"),
         )
         .filter(models.User.id == id)
         .group_by(models.User.id)
@@ -47,12 +47,36 @@ def get_user(id: int, db: Session = Depends(get_db)):
         # )
         # .group_by(models.User.id)
     )
-    print(user[0].__dict__)
-    print(user.followers_count)
-    print(user.following_count)
+
+    followers_count = (
+        db.query(
+            # models.Followers,
+            func.count(models.Followers.id).label("followers_count")
+        )
+        .filter(models.Followers.follower_id == id)
+        .scalar()
+        # .group_by(models.Followers.id)
+    )
+    following_count = (
+        db.query(
+            # models.Followers,
+            func.count(models.Followers.id).label("following_count")
+        )
+        .filter(models.Followers.following_id == id)
+        .scalar()
+        # .group_by(models.Followers.id)
+    )
+    print(user.__dict__, followers_count, following_count)
+    # print(user.followers_count)
+    # print(user.following_count)
     if user == None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User with id={id} does not exists",
         )
-    return user[0]
+
+    return {
+        "user": user,
+        "followers_count": followers_count,
+        "following_count": following_count,
+    }
