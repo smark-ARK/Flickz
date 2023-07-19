@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Table
 from sqlalchemy.types import ARRAY
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.expression import text
@@ -20,6 +20,14 @@ class post(Base):
     )
     owner = relationship("User")
     comments = relationship("Comment")
+
+
+chat_users = Table(
+    "chat_users",
+    Base.metadata,
+    Column("chat_id", Integer, ForeignKey("chats.id", on_delete="CASCADE")),
+    Column("user_id", Integer, ForeignKey("Users.id", on_delete="CASCADE")),
+)
 
 
 class User(Base):
@@ -44,6 +52,7 @@ class User(Base):
     following = relationship(
         "Followers", foreign_keys="[Followers.following_id]", back_populates="following"
     )
+    chats = relationship("Chat", secondary=chat_users, back_populates="users")
     # comments = relationship("Comment", back_populates="user")
 
 
@@ -105,3 +114,22 @@ class Comment(Base):
         nullable=False,
     )
     user = relationship("User")
+
+
+class Chat(Base):
+    __tablename__ = "chats"
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    users = relationship("User", secondary=chat_users, back_populates="chats")
+
+
+class Message(Base):
+    __tablename__ = "messages"
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    content = Column(String, nullable=False)
+    sender_id = Column(
+        Integer, ForeignKey("Users.id", ondelete="CASCADE"), nullable=False
+    )
+    sender = relationship("User")
+    chat_id = Column(
+        Integer, ForeignKey("chats.id", ondelete="CASCADE"), nullable=False
+    )

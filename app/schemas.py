@@ -100,9 +100,6 @@ class Postwith(BaseModel):
     class Config:
         orm_mode = True
 
-    class Config:
-        orm_mode = True
-
 
 class CreateUser(BaseModel):
     username: str
@@ -130,3 +127,16 @@ class TokenData(BaseModel):
 class Vote(BaseModel):
     post_id: int
     dir: conint(le=1)
+
+
+class ChatResponse(BaseModel):
+    id: int
+    users: List[UserRelationResponse]
+
+    class Config:
+        orm_mode = True
+
+
+class MessageBase(BaseModel):
+    content: str
+    chat_id: int

@@ -70,4 +70,5 @@ def get_current_user(
     )
     token_data = verify_access_token(token, credentials_exception)
     user = db.query(models.User).filter(token_data.user_id == models.User.id).first()
+    print("AUTHENTICATED")
     return user
