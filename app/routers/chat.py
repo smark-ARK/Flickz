@@ -34,7 +34,7 @@ def create_chat(
         .group_by(models.Chat.id)
         .scalar()
     )
-    print(chat)
+    # print(chat)
     if chat:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -67,7 +67,7 @@ def get_chats(
     return chats
 
 
-@router.post("/message")
+@router.post("/messages/", response_model=schemas.MessageResponse)
 def send_message(
     message: schemas.MessageBase,
     db: Session = Depends(get_db),

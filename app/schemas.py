@@ -140,3 +140,11 @@ class ChatResponse(BaseModel):
 class MessageBase(BaseModel):
     content: str
     chat_id: int
+
+
+class MessageResponse(MessageBase):
+    id: int
+    sender: UserRelationResponse
+
+    class Config:
+        orm_mode = True
