@@ -1,0 +1,20 @@
+"join_chat":{
+    "chat_id": int,
+}
+
+"start_typing":{
+    "chat_id":int,
+    "user_id":int,
+    "username":str
+}
+
+"stop_typing":{
+    "chat_id":int,
+    "user_id":int,
+    "username":str
+}
+
+
+"setup":{
+    "user_id":int
+}

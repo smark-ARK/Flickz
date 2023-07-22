@@ -23,6 +23,30 @@ origins = [
 ]
 
 sio = SocketManager(app=app, cors_allowed_origins=origins)
+
+
+@sio.on("setup")
+async def setup_handler(sid, data):
+    sio.enter_room(sid, data["user_id"])
+    await sio.emit("connected", room=data["user_id"])
+
+
+@sio.on("start_typing")
+async def start_typing_handler(sid, data):
+    sio.emit("start_typing", data, room=data["chat_id"])
+
+
+@sio.on("stop_typing")
+async def start_typing_handler(sid, data):
+    sio.emit("stop_typing", data, room=data["chat_id"])
+
+
+@sio.on("join_chat")
+async def join_chat_handler(sid, data):
+    sio.enter_room(sid=sid, room=data["chat_id"])
+    print(f'user with sid: {sid} joined room {data["chat_id"]}')
+
+
 storage_client = storage.Client.from_service_account_json(
     "somple-social-ark-725ba2e57b95.json"
 )

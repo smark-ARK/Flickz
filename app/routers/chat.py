@@ -68,12 +68,13 @@ def get_chats(
 
 
 @router.post("/messages/", response_model=schemas.MessageResponse)
-def send_message(
+async def send_message(
     message: schemas.MessageBase,
     db: Session = Depends(get_db),
     current_user=Depends(oauth2.get_current_user),
 ):
-    print("hello")
+    chat = db.query(models.Chat).filter(models.Chat.id == message.chat_id).first()
+    users = chat.users
     new_message = models.Message(
         chat_id=message.chat_id, content=message.content, sender_id=current_user.id
     )
@@ -81,4 +82,13 @@ def send_message(
     db.add(new_message)
     db.commit()
     db.refresh(new_message)
+    type(new_message)
+    for i in users:
+        if i.id == current_user.id:
+            continue
+        await main.sio.emit(
+            "new_message",
+            schemas.MessageResponse.from_orm(new_message).json(),
+            room=i.id,
+        )
     return new_message

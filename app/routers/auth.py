@@ -23,8 +23,12 @@ def login(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN, detail="invalid credentials"
         )
-    access_token = oauth2.create_access_token(data={"user_id": user.id})
-    refresh_token = oauth2.create_refresh_token(data={"user_id": user.id})
+    access_token = oauth2.create_access_token(
+        data={"user_id": user.id, "username": user.username}
+    )
+    refresh_token = oauth2.create_refresh_token(
+        data={"user_id": user.id, "username": user.username}
+    )
 
     response.set_cookie(
         key="refresh_token",

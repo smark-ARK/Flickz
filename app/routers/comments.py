@@ -60,5 +60,5 @@ async def comment(
 @router.get("/post_id", response_model=List[schemas.CommentResponse])
 async def get_comments(post_id: int, db: Session = Depends(database.get_db)):
     comments = db.query(models.Comment).filter(models.Comment.post_id == post_id).all()
-    print(comments[0].user)
+    # print(comments[0].user)
     return comments
