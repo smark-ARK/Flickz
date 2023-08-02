@@ -31,24 +31,13 @@ def create_user(user: schemas.CreateUser, db: Session = Depends(get_db)):
 @router.get("/{id}", response_model=schemas.Profile)
 def get_user(id: int, db: Session = Depends(get_db)):
     user = (
-        db.query(
-            models.User,
-            # func.count(models.User.followers).label("followers_count"),
-            # func.count(models.User.following).label("following_counjkt"),
-        )
+        db.query(models.User)
         .filter(models.User.id == id)
         .group_by(models.User.id)
         .first()
-        # .outerjoin(models.Followers, models.User.id == models.Followers.following_id)
-        # .with_entities(
-        #     models.User,
-        #     func.count(models.Followers.follower_id).label("followers_count"),
-        #     func.count(models.Followers.following_id).label("following_count"),
-        # )
-        # .group_by(models.User.id)
     )
 
-    followers_count = (
+    following_count = (
         db.query(
             # models.Followers,
             func.count(models.Followers.id).label("followers_count")
@@ -57,7 +46,7 @@ def get_user(id: int, db: Session = Depends(get_db)):
         .scalar()
         # .group_by(models.Followers.id)
     )
-    following_count = (
+    followers_count = (
         db.query(
             # models.Followers,
             func.count(models.Followers.id).label("following_count")

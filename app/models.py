@@ -41,7 +41,7 @@ class User(Base):
     profile_photo = Column(
         String,
         nullable=True,
-        default="https://storage.googleapis.com/simple-social-posts/blank-profile-picture-973460_1280.webp",
+        default="https://storage.googleapis.com/simple-social-posts/abstract-user-flat-4.png",
     )
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")

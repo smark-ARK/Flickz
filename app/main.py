@@ -20,6 +20,7 @@ origins = [
     "http://localhost:3000",
     "https://*",
     "http://127.0.0.1:8000",
+    "https://simple-social-smark.netlify.app",
 ]
 
 sio = SocketManager(app=app, cors_allowed_origins=origins)
