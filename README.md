@@ -12,7 +12,7 @@ Simple Social is a lightweight social networking platform that allows users to c
 - Commenting and Liking Posts
 - Direct Messaging Between Users
 - Responsive Design for Mobile and Desktop
-### Frontend Deployed: [Simple social Frontend](https://github.com/smark-Mahi/Simple-Social-media.git)
+### Frontend Deployed: [Simple social Frontend](https://simple-social-smark.netlify.app/)
 ### Backend Documentation [Simple Social Swagger Docs](https://simple-social.onrender.com/docs)
 
 ### Frontend Repo: [Simple social Frontend Repo](https://github.com/smark-Mahi/Simple-Social-media.git)
