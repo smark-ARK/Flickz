@@ -26,7 +26,7 @@ from google.cloud import storage
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
 
-@router.get("/", response_model=List[schemas.Postwith])  # 2
+@router.get("/general", response_model=List[schemas.Postwith])  # 2
 def get_posts(
     db: Session = Depends(get_db),
     # current_user: int = Depends(oauth2.get_current_user),
@@ -34,16 +34,39 @@ def get_posts(
     skip: int = 0,
     search: Optional[str] = "",
 ):
-    """posts = (
-        db.query(models.post)
-        .filter(models.post.title.contains(search))
-        .limit(post_limit)
-        .offset(skip)
-        .all()
-    )"""
     # SELECT posts.*, COUNT(votes.post_id) AS votes FROM posts LEFT JOIN votes ON posts.id=votes.post_id GROUP BY posts.id;
     result = (
         db.query(models.post, func.count(models.Votes.post_id).label("votes"))
+        .join(models.Votes, models.Votes.post_id == models.post.id, isouter=True)
+        .group_by(models.post.id)
+        .filter(models.post.related_text.contains(search))
+        .limit(post_limit)
+        .offset(skip)
+        .all()
+    )
+
+    return result
+
+
+@router.get("/", response_model=List[schemas.Postwith])  # 2
+def get_posts(
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(oauth2.get_current_user),
+    post_limit: int = 10,
+    skip: int = 0,
+    search: Optional[str] = "",
+):
+    # SELECT posts.*, COUNT(votes.post_id) AS votes FROM posts LEFT JOIN votes ON posts.id=votes.post_id GROUP BY posts.id;
+    result = (
+        db.query(
+            models.post,
+            func.count(models.Votes.post_id).label("votes"),
+            models.post.id.in_(
+                db.query(models.Votes.post_id).filter(
+                    models.Votes.user_id == current_user.id
+                )
+            ).label("is_liked_by_viewer"),
+        )
         .join(models.Votes, models.Votes.post_id == models.post.id, isouter=True)
         .group_by(models.post.id)
         .filter(models.post.related_text.contains(search))

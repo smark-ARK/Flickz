@@ -95,6 +95,7 @@ class Postwithout(BaseModel):
 class Postwith(BaseModel):
     post: PostResponse
     votes: int
+    is_liked_by_viewer: Optional[bool]
     pass
 
     class Config:
