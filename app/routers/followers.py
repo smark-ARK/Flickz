@@ -6,6 +6,7 @@ from app import models, schemas, utils, oauth2
 from ..database import get_db
 from fastapi.params import Body, Depends  # post data lere
 from app.utils import send_event
+from sqlalchemy.sql.functions import func
 
 
 from typing import Optional, List
@@ -70,3 +71,61 @@ async def unfollow(
         },
     )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.get("/followers/{user_id}", response_model=List[schemas.UserListResponse])
+def get_followers(
+    user_id: int,
+    limit: int = 10,
+    skip: int = 0,
+    current_user: dict = Depends(oauth2.get_current_user),
+    db: Session = Depends(get_db),
+):
+    followers = (
+        db.query(
+            models.User,
+            models.Followers.follower_id.in_(
+                db.query(models.Followers.following_id).filter(
+                    models.Followers.follower_id == current_user.id
+                )
+            ).label("is_followed_by_viewer"),
+        )
+        .join(models.Followers, models.User.id == models.Followers.follower_id)
+        .filter(models.Followers.following_id == user_id)
+        .limit(limit)
+        .offset(skip)
+        .all()
+    )
+
+    print(followers)
+
+    return followers
+
+
+@router.get("/following/{user_id}", response_model=List[schemas.UserListResponse])
+def get_followers(
+    user_id: int,
+    limit: int = 10,
+    skip: int = 0,
+    current_user: dict = Depends(oauth2.get_current_user),
+    db: Session = Depends(get_db),
+):
+    followers = (
+        db.query(
+            models.User,
+            models.Followers.follower_id.in_(
+                db.query(models.Followers.following_id).filter(
+                    models.Followers.follower_id == current_user.id
+                )
+            ).label("is_followed_by_viewer"),
+        )
+        .join(models.Followers, models.User.id == models.Followers.following_id)
+        .filter(models.Followers.follower_id == user_id)
+        .limit(limit)
+        .offset(skip)
+        .all()
+    )
+
+    print(followers)
+
+    return followers

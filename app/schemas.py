@@ -148,3 +148,11 @@ class MessageResponse(MessageBase):
 
     class Config:
         orm_mode = True
+
+
+class UserListResponse(BaseModel):
+    User: UserRelationResponse
+    is_followed_by_viewer: bool
+
+    class Config:
+        orm_mode = True
