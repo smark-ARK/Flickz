@@ -92,3 +92,14 @@ async def send_message(
             room=i.id,
         )
     return new_message
+
+
+@router.get("/messages/{chat_id}")
+def get_messages(
+    chat_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(oauth2.get_current_user),
+):
+    mesages = db.query(models.Message).filter(models.Message.chat_id == chat_id).all()
+
+    return mesages

@@ -7,7 +7,7 @@ from fastapi import (
 )
 from sqlalchemy import func
 from sqlalchemy.orm.session import Session
-from .. import models, schemas, utils
+from .. import models, schemas, utils, oauth2
 from ..database import get_db
 from fastapi.params import Body, Depends  # post data lere
 
@@ -29,9 +29,15 @@ def create_user(user: schemas.CreateUser, db: Session = Depends(get_db)):
 
 
 @router.get("/{id}", response_model=schemas.Profile)
-def get_user(id: int, db: Session = Depends(get_db)):
+def get_user(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(oauth2.get_current_user),
+):
     user = (
-        db.query(models.User)
+        db.query(
+            models.User,
+        )
         .filter(models.User.id == id)
         .group_by(models.User.id)
         .first()
@@ -55,7 +61,7 @@ def get_user(id: int, db: Session = Depends(get_db)):
         .scalar()
         # .group_by(models.Followers.id)
     )
-    print(user.__dict__, followers_count, following_count)
+    # print(user.__dict__, followers_count, following_count)
     # print(user.followers_count)
     # print(user.following_count)
     if user == None:
