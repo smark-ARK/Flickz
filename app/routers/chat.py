@@ -94,12 +94,21 @@ async def send_message(
     return new_message
 
 
-@router.get("/messages/{chat_id}")
+@router.get("/messages/{chat_id}", response_model=List[schemas.MessageResponse])
 def get_messages(
+    page: int,
     chat_id: int,
     db: Session = Depends(get_db),
     current_user=Depends(oauth2.get_current_user),
 ):
-    mesages = db.query(models.Message).filter(models.Message.chat_id == chat_id).all()
+    limit = 20
+    skip = page * limit
+    mesages = (
+        db.query(models.Message)
+        .filter(models.Message.chat_id == chat_id)
+        .limit(limit)
+        .offset(skip)
+        .all()
+    )
 
     return mesages
