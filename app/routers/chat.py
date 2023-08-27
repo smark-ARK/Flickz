@@ -94,7 +94,7 @@ async def send_message(
     return new_message
 
 
-@router.get("/messages/{chat_id}", response_model=List[schemas.MessageResponse])
+@router.get("/messages/{chat_id}", response_model=schemas.PaginatedMessageResponse)
 def get_messages(
     page: int,
     chat_id: int,
@@ -103,12 +103,10 @@ def get_messages(
 ):
     limit = 20
     skip = page * limit
-    mesages = (
-        db.query(models.Message)
-        .filter(models.Message.chat_id == chat_id)
-        .limit(limit)
-        .offset(skip)
-        .all()
-    )
+    query = db.query(models.Message).filter(models.Message.chat_id == chat_id)
 
-    return mesages
+    count = query.count()
+
+    messages = query.limit(limit).offset(skip).all()
+
+    return {"messages": messages, "total_pages": count // limit}

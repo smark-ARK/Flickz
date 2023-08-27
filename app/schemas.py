@@ -151,6 +151,14 @@ class MessageResponse(MessageBase):
         orm_mode = True
 
 
+class PaginatedMessageResponse(BaseModel):
+    messages: List[MessageResponse]
+    total_pages: int
+
+    class Config:
+        orm_mode = True
+
+
 class UserListResponse(BaseModel):
     User: UserRelationResponse
     is_followed_by_viewer: bool
