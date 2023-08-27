@@ -66,9 +66,13 @@ class CommentResponse(CommentBase):
 
 
 class Profile(BaseModel):
-    user: UserResponse
+    User: UserResponse
     followers_count: int
     following_count: int
+    is_followed_by_viewer: bool
+
+    class Config:
+        orm_mode = True
 
 
 class PostResponse(PostBase):

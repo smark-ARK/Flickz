@@ -37,44 +37,29 @@ def get_user(
     user = (
         db.query(
             models.User,
+            func.count(models.Followers.following_id)
+            .filter(models.Followers.follower_id == models.User.id)
+            .label("following_count"),
+            func.count(models.Followers.follower_id)
+            .filter(models.Followers.following_id == models.User.id)
+            .label("followers_count"),
+            models.User.id.in_(
+                db.query(models.Followers.following_id).filter(
+                    models.Followers.follower_id == current_user.id
+                )
+            ).label("is_followed_by_viewer"),
         )
         .filter(models.User.id == id)
         .group_by(models.User.id)
         .first()
     )
-
-    following_count = (
-        db.query(
-            # models.Followers,
-            func.count(models.Followers.id).label("followers_count")
-        )
-        .filter(models.Followers.follower_id == id)
-        .scalar()
-        # .group_by(models.Followers.id)
-    )
-    followers_count = (
-        db.query(
-            # models.Followers,
-            func.count(models.Followers.id).label("following_count")
-        )
-        .filter(models.Followers.following_id == id)
-        .scalar()
-        # .group_by(models.Followers.id)
-    )
-    # print(user.__dict__, followers_count, following_count)
-    # print(user.followers_count)
-    # print(user.following_count)
     if user == None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User with id={id} does not exists",
         )
 
-    return {
-        "user": user,
-        "followers_count": followers_count,
-        "following_count": following_count,
-    }
+    return user
 
 
 @router.get("/", response_model=List[schemas.UserResponse])
