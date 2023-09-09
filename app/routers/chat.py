@@ -1,5 +1,5 @@
 from fastapi import status, HTTPException, APIRouter
-from sqlalchemy import func
+from sqlalchemy import func, desc
 from sqlalchemy.orm.session import Session
 from .. import models, schemas, utils
 from ..database import get_db
@@ -103,7 +103,11 @@ def get_messages(
 ):
     limit = 20
     skip = page * limit
-    query = db.query(models.Message).filter(models.Message.chat_id == chat_id)
+    query = (
+        db.query(models.Message)
+        .filter(models.Message.chat_id == chat_id)
+        .order_by(desc(models.Message.created_at))
+    )
 
     count = query.count()
 

@@ -149,6 +149,7 @@ class MessageBase(BaseModel):
 
 class MessageResponse(MessageBase):
     id: int
+    created_at: datetime
     sender: UserRelationResponse
 
     class Config:

@@ -133,3 +133,6 @@ class Message(Base):
     chat_id = Column(
         Integer, ForeignKey("chats.id", ondelete="CASCADE"), nullable=False
     )
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
