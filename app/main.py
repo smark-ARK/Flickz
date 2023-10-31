@@ -5,6 +5,7 @@ from .database import engine
 from .routers import users, posts, auth, votes, followers, comments, chat
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import storage
+import json
 
 
 from fastapi_socketio import SocketManager
@@ -30,23 +31,28 @@ sio = SocketManager(app=app)
 
 @sio.on("setup")
 async def setup_handler(sid, data):
-    sio.enter_room(sid, data["user_id"])
-    await sio.emit("connected", room=data["user_id"])
+    data = json.loads(data)
+
+    await sio.enter_room(sid, data["user_id"])
+    await sio.emit(f"connection_established", room=data["user_id"])
 
 
 @sio.on("start_typing")
 async def start_typing_handler(sid, data):
-    sio.emit("start_typing", data, room=data["chat_id"])
+    data = json.loads(data)
+    await sio.emit("start_typing", data, room=data["chat_id"])
 
 
 @sio.on("stop_typing")
 async def start_typing_handler(sid, data):
-    sio.emit("stop_typing", data, room=data["chat_id"])
+    data = json.loads(data)
+    await sio.emit("stop_typing", data, room=data["chat_id"])
 
 
 @sio.on("join_chat")
 async def join_chat_handler(sid, data):
-    sio.enter_room(sid=sid, room=data["chat_id"])
+    data = json.loads(data)
+    await sio.enter_room(sid=sid, room=data["chat_id"])
     print(f'user with sid: {sid} joined room {data["chat_id"]}')
 
 
