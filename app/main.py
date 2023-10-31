@@ -6,7 +6,7 @@ from .routers import users, posts, auth, votes, followers, comments, chat
 from fastapi.middleware.cors import CORSMiddleware
 from google.cloud import storage
 
-# from socketio import AsyncServer
+
 from fastapi_socketio import SocketManager
 
 
@@ -21,9 +21,11 @@ origins = [
     "https://*",
     "http://127.0.0.1:8000",
     "https://simple-social-smark.netlify.app",
+    "http://127.0.0.1:3000",
+    "localhost:3000",
 ]
 
-sio = SocketManager(app=app, cors_allowed_origins=origins)
+sio = SocketManager(app=app)
 
 
 @sio.on("setup")
