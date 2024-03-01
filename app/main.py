@@ -56,11 +56,6 @@ async def join_chat_handler(sid, data):
     print(f'user with sid: {sid} joined room {data["chat_id"]}')
 
 
-storage_client = storage.Client.from_service_account_json(
-    "somple-social-ark-725ba2e57b95.json"
-)
-bucket = storage_client.get_bucket("simple-social-posts")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
