@@ -13,7 +13,8 @@ from sqlalchemy.orm.session import Session
 from sqlalchemy.sql.expression import label
 from sqlalchemy.sql.functions import count, func
 
-from app import oauth2, main
+from app import oauth2
+from app.config import settings
 from .. import models, schemas
 from ..database import get_db
 from fastapi.params import Depends  # post data lere
@@ -21,7 +22,9 @@ from fastapi.params import Depends  # post data lere
 # from pydantic import BaseModel  # schema Validation
 from typing import Optional, List
 
-from google.cloud import storage
+# from google.cloud import storage
+from boto3.session import Session
+
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
 
@@ -86,16 +89,32 @@ def get_posts(
 async def upload_image(
     image: UploadFile = File(...),
 ):
-    # storage_client = storage.Client.from_service_account_json(
-    #     "somple-social-ark-725ba2e57b95.json"
-    # )
-    # bucket = storage_client.get_bucket("simple-social-posts")
+    session = Session(
+        aws_access_key_id=settings.aws_access_key_id,
+        aws_secret_access_key=settings.aws_secret_access_key,
+    )
+    s3_client = session.client("s3")
 
-    blob = main.bucket.blob(image.filename)
-    blob.upload_from_string(await image.read())
-    return {
-        "image_url": f"https://storage.googleapis.com/{main.bucket.name}/{image.filename}"
-    }
+    if not image.filename.lower().endswith((".jpg", ".jpeg", ".png", ".gif")):
+        raise HTTPException(status_code=400, detail="Invalid image format")
+
+    try:
+        # Upload the image to S3
+        s3_client.upload_fileobj(image.file, settings.bucket_name, image.filename)
+
+        # Generate image URL
+        image_url = f"https://{settings.bucket_name}.s3.amazonaws.com/{image.filename}"
+
+        return {"image_url": image_url}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error uploading image: {e}")
+
+    # blob = main.bucket.blob(image.filename)
+    # blob.upload_from_string(await image.read())
+    # return {
+    #     "image_url": f"https://storage.googleapis.com/{main.bucket.name}/{image.filename}"
+    # }
 
 
 @router.post(

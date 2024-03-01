@@ -1,4 +1,5 @@
 .env
 .venv/
-__pycache__
+__pycache__/
+.vscode
 somple-social-ark-725ba2e57b95.json

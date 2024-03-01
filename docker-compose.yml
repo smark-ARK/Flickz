@@ -1,8 +1,10 @@
 version: '3'
 services:
-  api:
+  simple-social-api:
     build: .
     ports:
       - 8000:8000
     env_file:
       - ./.env
+    volumes:
+      - ./:/app

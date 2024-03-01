@@ -1,0 +1,25 @@
+version: '3'
+services:
+  simple-social-postgres:
+    image: postgres:14.2
+    container_name: simple-social-db
+    env_file:
+      - .env
+    volumes:
+      - simple-social-data:/var/lib/postgres/data
+  simple-social-api:
+    build: .
+    ports:
+      - 8000:8000
+    depends_on:
+      simple-social-postgres:
+          condition: service_started
+          restart: true
+    env_file:
+      - ./.env
+    volumes:
+      - ./:/app
+
+
+volumes:
+  simple-social-data:

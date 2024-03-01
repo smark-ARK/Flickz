@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     algorithm: str
     access_expire_minutes: int
     refresh_expire_minutes: int
+    aws_access_key_id: str
+    aws_secret_access_key: str
+    bucket_name: str
 
 
 settings = Settings(_env_file=".env")
