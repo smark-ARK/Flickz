@@ -19,11 +19,7 @@ app = FastAPI()
 origins = [
     "http://localhost:5173",
     "http://localhost:3000",
-    "https://*",
-    "http://127.0.0.1:8000",
-    "https://simple-social-smark.netlify.app",
-    "http://127.0.0.1:3000",
-    "localhost:3000",
+    "https://flickz.vercel.app/",
 ]
 
 sio = SocketManager(app=app)
