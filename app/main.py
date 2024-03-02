@@ -19,7 +19,6 @@ app = FastAPI()
 origins = [
     "http://localhost:5173",
     "http://localhost:3000",
-    "flickz.vercel.app",
     "https://flickz.vercel.app",
 ]
 

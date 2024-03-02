@@ -126,6 +126,7 @@ def create_posts(
     db: Session = Depends(get_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
+    print("start")
     created_post = models.post(owner_id=current_user.id, **post.dict())
     db.add(created_post)
     db.commit()

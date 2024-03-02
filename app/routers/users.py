@@ -62,7 +62,6 @@ def get_user(
         .first()
         is not None
     )
-    print(user)
     if user == None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
